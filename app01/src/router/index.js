@@ -29,6 +29,11 @@ const router = createRouter({
             name: 'NotFoundView',
             component: NotFoundView,
         },
+        {
+            path: '/promotion/:id',
+            name: 'PromotionView',
+            component: PromotionView,
+        }
     ]
 })
 

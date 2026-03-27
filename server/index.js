@@ -18,6 +18,32 @@ app.get("/promotions", function(req, res){
 
 })
 
+app.get("/promotion/:id", (req, res) => {
+    const obj = jsonik.promotions.filter(a => a.id == req.params.id)[0]
+    res.json(obj)
+})
+app.get("/product/:id", (req, res) => {
+    res.json(jsonik.products.filter(a => a.id == req.params.id)[0])
+})
+
+
+
+app.get("/promotionItems/:id", function(req, res){
+    const arr = jsonik.promotions.filter(a => a.id == req.params.id)[0].items
+    const resp = {}
+    arr.forEach((element, index) => {
+        resp[index] = jsonik.products.filter(a => a.id == element)[0]
+    });
+    res.json(resp)
+})
+
+
+
+
+
+app.get('/health', function(req, res){
+    res.send('ok')
+})
 
 app.listen(PORT, function () {
     console.log("start serwera na porcie " + PORT)
