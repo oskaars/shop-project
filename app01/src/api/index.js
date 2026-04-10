@@ -22,9 +22,11 @@ const getProduct = (id) => get(`http://localhost:3000/product/${id}`)
 const getPromotionItems = (id) => get(`http://localhost:3000/promotionItems/${id}`)
 
 
+
 export {
 
     getPromotions,
+    
     getPromotion,
     getProduct,
     getPromotionItems

@@ -1,5 +1,5 @@
 <template>
-  <div :style="contStyle">
+  <div :style="contStyle" id="p-tile">
     <h3>{{ this.promotion.header }}</h3>
     <h2>{{ this.promotion.description }}</h2>
   </div>
@@ -28,4 +28,14 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+ 
+  #p-tile{
+    text-decoration: none;
+    color:black;
+    background-color: grey;
+    width: 80%;
+    height: 400px;
+    text-align: center;
+  }
+</style>

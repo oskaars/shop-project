@@ -30,9 +30,9 @@ app.get("/product/:id", (req, res) => {
 
 app.get("/promotionItems/:id", function(req, res){
     const arr = jsonik.promotions.filter(a => a.id == req.params.id)[0].items
-    const resp = {}
+    const resp = []
     arr.forEach((element, index) => {
-        resp[index] = jsonik.products.filter(a => a.id == element)[0]
+        resp.push(jsonik.products.filter(a => a.id == element)[0])
     });
     res.json(resp)
 })

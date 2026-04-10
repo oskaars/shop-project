@@ -13,6 +13,7 @@ const promotion = {
     //mutations czyli setters
     mutations: {
         SET_PROMOTION_OBJECT(state, newPromotionObject) {
+            console.log("działa")
             state.promotionObject = newPromotionObject
         },
         SET_PROMOTION_LOADING(state, loadingState) {
@@ -27,34 +28,37 @@ const promotion = {
     getters: {
         GET_PROMOTION_OBJECT(state) {
             return state.promotionObject
+        },
+        GET_PROMOTION_LOADING(state) {
+            return state.promotionLoading
+        },
+        GET_PROMOTION_ERROR(state) {
+            return state.promotionError
         }
     },
 
     // tu zapytania do serwera z pomocą naszego api
     actions: {
+// store/promotion.js
 
-        FETCH_PROMOTION({ state, commit }) {
+FETCH_PROMOTION({ commit }, id) {
+    commit("SET_PROMOTION_LOADING", true);
 
-            // najpierw ustawiamy stan ładowania na true (czyli dane się ładują, teraz mógłby się pokazywać loader)
-
-            commit("SET_PROMOTIONS_LOADING", true)
-
-            // potem wywołujemy funkcję z api, która
-            // odbiera dane z serwera (poprzez axios) i ustawia listę promocji w store
-            // w razie błędu ustawia error w store (catch)
-            // niezależnie od błędu lub jego braku (finally), kończy loading
-
-            getPromotionItems()
-                .then(data => {
-                    commit("SET_PROMOTIONS_OBJECT", data)
-                })
-                .catch(error => {
-                    commit("SET_PROMOTIONS_ERROR", "server error!!!")
-                })
-                .finally(() => {
-                    commit("SET_PROMOTIONS_LOADING", false)
-                })
-        },
+    getPromotionItems(id)
+        .then(data => {
+            // data jest teraz tablicą [ {...}, {...} ]
+            // Zapisujemy ją jako obiekt z kluczem items, 
+            // bo tak masz ustawione w PromotionView.vue (promotionObject.items)
+            commit("SET_PROMOTION_OBJECT", { items: data });
+        })
+        .catch(error => {
+            console.error("Błąd pobierania:", error);
+            commit("SET_PROMOTION_ERROR", "Nie udało się pobrać produktów.");
+        })
+        .finally(() => {
+            commit("SET_PROMOTION_LOADING", false);
+        });
+}
     }
 }
 
