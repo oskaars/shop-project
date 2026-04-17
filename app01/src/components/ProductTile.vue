@@ -4,11 +4,17 @@
     <div>{{ product.name }}</div>
     <div>{{ product.price }}zł</div>
   </RouterLink>
+  <AppRating :product/>
 </template>
 
 <script>
+import AppRating from './AppRating.vue';
 export default {
+  
   name: "ProductTile",
+  components:{
+    AppRating
+  },
   props: {
     product: {
       type: Object,

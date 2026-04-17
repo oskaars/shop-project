@@ -6,10 +6,7 @@
       :key="product.id"
       :product="product"
     />
-    <AppRating
-        v-for="rate in promotionObject.rate"
-        :rate=rate     
-    />
+
 
   </div>
   

@@ -1,6 +1,6 @@
 <template>
 <div class="rating">
-    <span v-for="n in Math.floor(rate)" :key="n">
+    <span v-for="n in Math.floor(product.rate)" :key="n">
       ⭐
     </span>
   </div>
@@ -9,8 +9,8 @@
 <script>
 export default {
     props: {
-        rate: {
-            type: Number,
+        product: {
+            type: Object,
             required: true
         }
     },
