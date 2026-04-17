@@ -2,7 +2,8 @@ const express = require("express")
 const app = express()
 const PORT = 3000;
 const cors = require('cors');
-
+const fs = require('fs').promises;
+const path = require('path');
 
 
 app.use(express.static('static'))
@@ -13,8 +14,8 @@ app.use(express.json());
 const jsonik = require("./data/data.json")
 
 
-app.get("/promotions", function(req, res){
-    res.json(jsonik); 
+app.get("/promotions", function (req, res) {
+    res.json(jsonik);
 
 })
 
@@ -28,7 +29,7 @@ app.get("/product/:id", (req, res) => {
 
 
 
-app.get("/promotionItems/:id", function(req, res){
+app.get("/promotionItems/:id", function (req, res) {
     const arr = jsonik.promotions.filter(a => a.id == req.params.id)[0].items
     const resp = []
     arr.forEach((element, index) => {
@@ -39,9 +40,27 @@ app.get("/promotionItems/:id", function(req, res){
 
 
 
+app.post('/createUser', async function (req, res) {
+
+    usersFilePath = path.join("data", "users.json")
+
+    const users = require("./data/users.json")
 
 
-app.get('/health', function(req, res){
+    console.log(req.body)
+    const usersData = {
+        email: req.body.email,
+        password: req.body.password
+    }
+
+    await fs.writeFile(usersFilePath, JSON.stringify(usersData, null, 2), 'utf8');
+    res.json({"message":"zapisano"})
+})
+
+
+
+
+app.get('/health', function (req, res) {
     res.send('ok')
 })
 
