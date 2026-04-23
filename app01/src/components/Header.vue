@@ -2,6 +2,7 @@
   <div id="nav">
     <RouterLink to="/" exact>Home</RouterLink>
     <RouterLink to="/about">About</RouterLink>
+    <RouterLink to="/register">register</RouterLink>
     <RouterLink to="/nnn">Not found</RouterLink>
   </div>
 </template>

@@ -6,9 +6,17 @@ const fs = require('fs').promises;
 const path = require('path');
 
 
+const corsOptions = {
+    origin: 'http://localhost:5173',
+    credentials: true, //ustawia header access-control-allow-credentials:true
+    optionSuccessStatus: 200
+   }
+
 app.use(express.static('static'))
-app.use(cors())
+app.use(cors(corsOptions))
 app.use(express.json());
+
+
 
 
 const jsonik = require("./data/data.json")
@@ -41,21 +49,31 @@ app.get("/promotionItems/:id", function (req, res) {
 
 
 app.post('/createUser', async function (req, res) {
+    try {
+        const usersFilePath = path.join(__dirname, "data", "users.json");
+        const data = await fs.readFile(usersFilePath, 'utf8');
+        const usersArray = JSON.parse(data); 
+        const userExists = usersArray.find(user => user.email === req.body.email);
 
-    usersFilePath = path.join("data", "users.json")
+        if (userExists) {
+            return res.json({ status: "exists", message: "user exists" });
+        }
 
-    const users = require("./data/users.json")
+        const newUser = {
+            email: req.body.email,
+            password: req.body.password
+        };
+        usersArray.push(newUser);
 
+        await fs.writeFile(usersFilePath, JSON.stringify(usersArray, null, 2), 'utf8');
+        
+        res.json({ status: "registered", message: "registered" });
 
-    console.log(req.body)
-    const usersData = {
-        email: req.body.email,
-        password: req.body.password
+    } catch (error) {
+        console.error("registration error", error);
+        res.status(500).json({ status: "error", message: "server error" });
     }
-
-    await fs.writeFile(usersFilePath, JSON.stringify(usersData, null, 2), 'utf8');
-    res.json({"message":"zapisano"})
-})
+});
 
 
 
