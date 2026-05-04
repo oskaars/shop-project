@@ -4,18 +4,19 @@ const PORT = 3000;
 const cors = require('cors');
 const fs = require('fs').promises;
 const path = require('path');
+const cookieParser = require('cookie-parser');
 
 
 const corsOptions = {
     origin: 'http://localhost:5173',
     credentials: true, //ustawia header access-control-allow-credentials:true
     optionSuccessStatus: 200
-   }
+}
 
 app.use(express.static('static'))
 app.use(cors(corsOptions))
 app.use(express.json());
-
+app.use(cookieParser());
 
 
 
@@ -52,7 +53,7 @@ app.post('/createUser', async function (req, res) {
     try {
         const usersFilePath = path.join(__dirname, "data", "users.json");
         const data = await fs.readFile(usersFilePath, 'utf8');
-        const usersArray = JSON.parse(data); 
+        const usersArray = JSON.parse(data);
         const userExists = usersArray.find(user => user.email === req.body.email);
 
         if (userExists) {
@@ -66,11 +67,69 @@ app.post('/createUser', async function (req, res) {
         usersArray.push(newUser);
 
         await fs.writeFile(usersFilePath, JSON.stringify(usersArray, null, 2), 'utf8');
-        
+
         res.json({ status: "registered", message: "registered" });
 
     } catch (error) {
         console.error("registration error", error);
+        res.status(500).json({ status: "error", message: "server error" });
+    }
+});
+
+app.post("/loginUser", async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        if (!email || !password) {
+            return res.status(400).json({ status: "error", message: "Email and password are required" });
+        }
+
+        const usersFilePath = path.join(__dirname, "data", "users.json");
+        const data = await fs.readFile(usersFilePath, 'utf8');
+        const usersArray = JSON.parse(data);
+        const user = usersArray.find(u => u.email === email && u.password === password);
+
+        if (user) {
+            res.cookie('user', JSON.stringify({ email: user.email }), { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 }); // 24 hours
+            res.json({ status: "logged" });
+        } else {
+            res.json({ status: "notlogged" });
+        }
+    } catch (error) {
+        console.error("login error", error);
+        res.status(500).json({ status: "error", message: "server error" });
+    }
+})
+app.post("/logoutUser", (req, res) => {
+    res.clearCookie('user');
+    res.json({ status: "logout" });
+})
+
+app.get("/getCurrentUser", async (req, res) => {
+    try {
+        const userCookie = req.cookies.user;
+        if (!userCookie) {
+            return res.json({ status: "unauthorized" });
+        }
+
+        const userData = JSON.parse(userCookie);
+        const email = userData.email;
+
+        if (!email) {
+            return res.json({ status: "unauthorized" });
+        }
+
+        const usersFilePath = path.join(__dirname, "data", "users.json");
+        const data = await fs.readFile(usersFilePath, 'utf8');
+        const usersArray = JSON.parse(data);
+        const user = usersArray.find(u => u.email === email);
+
+        if (user) {
+            res.json({ status: "authorized", email: email });
+        } else {
+            res.json({ status: "unauthorized" });
+        }
+    } catch (error) {
+        console.error("getCurrentUser error", error);
         res.status(500).json({ status: "error", message: "server error" });
     }
 });

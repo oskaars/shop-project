@@ -7,8 +7,12 @@ import App from './App.vue'
 
 
 
-createApp(App)
+const app = createApp(App)
     .use(store)
     .use(router)
-    .mount('#app')
+
+// Sprawdź czy użytkownik jest już zalogowany przy starcie aplikacji
+store.dispatch('User/FETCH_CURRENT_USER');
+
+app.mount('#app')
 

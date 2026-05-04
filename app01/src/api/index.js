@@ -38,8 +38,9 @@ const getProduct = (id) => get(`http://localhost:3000/product/${id}`)
 const getPromotionItems = (id) => get(`http://localhost:3000/promotionItems/${id}`)
 
 const registerUser = (userObject) => post(`http://localhost:3000/createUser`, userObject);
-
-
+const loginUser = (userObject) => post(`http://localhost:3000/loginUser`, userObject);
+const logoutUser = () => post(`http://localhost:3000/logoutUser`);
+const getCurrentUser = () => get(`http://localhost:3000/getCurrentUser`);
 
 export {
 
@@ -47,6 +48,9 @@ export {
     getPromotion,
     getProduct,
     getPromotionItems,
-    registerUser
-    //tu będą pozostałe metody
+    registerUser,
+    loginUser,
+    logoutUser,
+    getCurrentUser
+       //tu będą pozostałe metody
 }
