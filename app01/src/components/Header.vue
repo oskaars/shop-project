@@ -23,15 +23,15 @@
 export default {
   computed: {
     user() {
-      return this.$store.getters['User/GET_CURRENT_USER'];
+      return this.$store.getters['GET_CURRENT_USER'];
     },
     userLoading() {
-      return this.$store.getters['User/GET_CURRENT_LOADING'];
+      return this.$store.getters['GET_CURRENT_LOADING'];
     }
   },
   methods: {
     logout() {
-      this.$store.dispatch('User/LOGOUT_USER')
+      this.$store.dispatch('LOGOUT_USER')
         .then(() => {
           this.$router.push('/login');
         });

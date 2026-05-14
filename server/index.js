@@ -79,6 +79,8 @@ app.post('/createUser', async function (req, res) {
 app.post("/loginUser", async (req, res) => {
     try {
         const { email, password } = req.body;
+        console.log('[loginUser] otrzymano:', { email, password });
+
         if (!email || !password) {
             return res.status(400).json({ status: "error", message: "Email and password are required" });
         }
@@ -86,10 +88,13 @@ app.post("/loginUser", async (req, res) => {
         const usersFilePath = path.join(__dirname, "data", "users.json");
         const data = await fs.readFile(usersFilePath, 'utf8');
         const usersArray = JSON.parse(data);
+        console.log('[loginUser] użytkownicy w bazie:', usersArray.map(u => u.email));
+
         const user = usersArray.find(u => u.email === email && u.password === password);
+        console.log('[loginUser] znaleziony user:', user ? user.email : 'brak');
 
         if (user) {
-            res.cookie('user', JSON.stringify({ email: user.email }), { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 }); // 24 hours
+            res.cookie('user', JSON.stringify({ email: user.email }), { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
             res.json({ status: "logged", email: user.email });
         } else {
             res.json({ status: "notlogged" });

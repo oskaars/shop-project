@@ -14,7 +14,7 @@ import Header from './components/Header.vue';
             Header,
         },
         beforeCreate() {
-            this.$store.dispatch('User/FETCH_CURRENT_USER');
+            this.$store.dispatch('FETCH_CURRENT_USER');
         }
     }
 </script>

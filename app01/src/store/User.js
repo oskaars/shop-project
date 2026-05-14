@@ -2,7 +2,6 @@ import { loginUser, logoutUser, getCurrentUser } from '@/api';
 
 
 const User = {
-    namespaced: true,
     state: {
         userObject: null,
         userLoading: false,
@@ -27,10 +26,16 @@ const User = {
         LOGIN_USER({ commit }, { email, password }) {
             commit('SET_CURRENT_LOADING', true);
 
+            console.log('[LOGIN_USER] wysyłam:', { email, password });
+
             return loginUser({ email, password })
                 .then((userObject) => {
+                    console.log('[LOGIN_USER] odpowiedź serwera:', userObject);
                     if (userObject.email) {
                         commit('SET_CURRENT_USER', userObject);
+                        console.log('[LOGIN_USER] zalogowano, user w store:', userObject);
+                    } else {
+                        console.log('[LOGIN_USER] brak emaila w odpowiedzi - nieudane logowanie');
                     }
                 })
                 .finally(() => {

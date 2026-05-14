@@ -70,9 +70,10 @@
 
         this.loading = true;
 
-        this.$store.dispatch("User/LOGIN_USER", { email: this.email, password: this.password })
+        this.$store.dispatch("LOGIN_USER", { email: this.email, password: this.password })
           .then(() => {
-            const { email } = this.$store.getters['User/GET_CURRENT_USER'];
+            const user = this.$store.getters['GET_CURRENT_USER'];
+            const email = user && user.email;
 
             if (email) {
               this.logged = true;
