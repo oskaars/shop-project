@@ -12,9 +12,10 @@ import Header from './components/Header.vue';
     export default {
         components:{
             Header,
-            
+        },
+        beforeCreate() {
+            this.$store.dispatch('User/FETCH_CURRENT_USER');
         }
-        
     }
 </script>
 

@@ -2,6 +2,7 @@ import { loginUser, logoutUser, getCurrentUser } from '@/api';
 
 
 const User = {
+    namespaced: true,
     state: {
         userObject: null,
         userLoading: false,
@@ -23,52 +24,39 @@ const User = {
         }
     },
     actions:{
-        async LOGIN_USER({ commit }, userData) {
+        LOGIN_USER({ commit }, { email, password }) {
             commit('SET_CURRENT_LOADING', true);
-            try {
-                const response = await loginUser(userData);
-                if (response.status === 'logged') {
-                    // Pobierz dane aktualnego użytkownika
-                    const userResponse = await getCurrentUser();
-                    if (userResponse.status === 'authorized') {
-                        commit('SET_CURRENT_USER', { email: userResponse.email });
+
+            return loginUser({ email, password })
+                .then((userObject) => {
+                    if (userObject.email) {
+                        commit('SET_CURRENT_USER', userObject);
                     }
-                }
-                return response;
-            } catch (error) {
-                throw error;
-            } finally {
-                commit('SET_CURRENT_LOADING', false);
-            }
+                })
+                .finally(() => {
+                    commit('SET_CURRENT_LOADING', false);
+                });
         },
-        async LOGOUT_USER({ commit }) {
-            commit('SET_CURRENT_LOADING', true);
-            try {
-                const response = await logoutUser();
-                if (response.status === 'logout') {
-                    commit('SET_CURRENT_USER', null);
-                }
-                return response;
-            } catch (error) {
-                throw error;
-            } finally {
-                commit('SET_CURRENT_LOADING', false);
-            }
+        LOGOUT_USER({ commit }) {
+            commit('SET_CURRENT_USER', null);
+            return logoutUser();
         },
-        async FETCH_CURRENT_USER({ commit }) {
-            commit('SET_CURRENT_LOADING', true);
-            try {
-                const response = await getCurrentUser();
-                if (response.status === 'authorized') {
-                    commit('SET_CURRENT_USER', { email: response.email });
-                } else {
-                    commit('SET_CURRENT_USER', null);
-                }
-            } catch (error) {
-                commit('SET_CURRENT_USER', null);
-            } finally {
-                commit('SET_CURRENT_LOADING', false);
+        FETCH_CURRENT_USER({ commit, getters }) {
+            if (getters.GET_CURRENT_USER) {
+                return Promise.resolve();
             }
+
+            commit('SET_CURRENT_LOADING', true);
+
+            return getCurrentUser()
+                .then((userObject) => {
+                    if (userObject.email) {
+                        commit('SET_CURRENT_USER', userObject);
+                    }
+                })
+                .finally(() => {
+                    commit('SET_CURRENT_LOADING', false);
+                });
         }
     }
 

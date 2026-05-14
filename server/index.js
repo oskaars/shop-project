@@ -90,7 +90,7 @@ app.post("/loginUser", async (req, res) => {
 
         if (user) {
             res.cookie('user', JSON.stringify({ email: user.email }), { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 }); // 24 hours
-            res.json({ status: "logged" });
+            res.json({ status: "logged", email: user.email });
         } else {
             res.json({ status: "notlogged" });
         }
