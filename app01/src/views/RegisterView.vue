@@ -2,26 +2,31 @@
     <div class="register-container">
 
       <AppLoader v-if="loading" />
-      <div class="register-box">
+      <div >
         <h2>Rejestracja</h2>
 
         <form @submit.prevent="onSubmit">
 
-          <div class="form-group">
+          <div>
             <label for="email">Email:</label>
             <input id="email" type="email" v-model="email"  />
           </div>
 
-          <div class="form-group">
+          <div>
             <label for="password">Hasło:</label>
             <input id="password" type="password" v-model="password"  />
           </div>
+          <div>
+            <label for="password_r">Powtórz hasło:</label>
+            <input id="password_r" type="password" v-model="password1"  />
+          </div>
+
 
           <button type="submit" :disabled="disabled || loading">
             Zarejestruj się
           </button>
 
-          <div class="messages">
+          <div >
             <div v-if="error">{{ error }}</div>
             <div v-if="exists">Użytkownik o podanym adresie email już istnieje.</div>
             <div v-if="registered">Konto zostało pomyślnie założone.</div>
@@ -45,6 +50,7 @@
       return {
         email: "",
         password: "",
+        password1: "",
         error: "",
         exists: false,
         registered: false,
@@ -53,7 +59,7 @@
     },
     computed: {
       disabled() {
-        return this.email.length < 3 || this.password.length < 3;
+        return this.email.length < 3 || this.password.length < 3 || this.password1 !== this.password;
       },
     },
     methods: {
@@ -65,6 +71,9 @@
         if (this.password.length < 3) {
           this.error = "Hasło za krótkie, minimum 3 znaki.";
           return;
+        }
+        if(this.password !== this.password1){
+          this.error = " Hasła sie nie zgadzaja "
         }
 
         this.loading = true;
